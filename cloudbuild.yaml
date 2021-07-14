@@ -1,11 +1,7 @@
 steps:
-- id: 'Setup: Pull Dependencies'
-  name: golang
-  env: ['GO111MODULE=on', 'CGO_ENABLED=0']
-  args: ['go', 'mod', 'tidy']
-  volumes:
-  - name: 'go-vol'
-    path: '/go'
+- id: 'Docker end-to-end test'
+  name: gcr.io/cloud-builders/docker
+  args: ['./test/docker_e2e.sh']
 - id: 'Lint: Formatting'
   name: golangci/golangci-lint:v1.23.8
   # Disable staticcheck since grpc-gateway doesn't use DialContext
