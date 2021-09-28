@@ -50,6 +50,13 @@ func (manager Manager) String() string {
 	return string(manager)
 }
 
+func ManagerFromString(s string) (Manager, error) {
+	if len(s) == 0 {
+		return Manager(""), stacktrace.NewError("Error parsing manager. Empty string")
+	}
+	return Manager(s), nil
+}
+
 func IDFromString(s string) (ID, error) {
 	id, err := uuid.Parse(s)
 	if err != nil {
