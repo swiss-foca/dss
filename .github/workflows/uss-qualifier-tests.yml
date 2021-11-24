@@ -1,6 +1,6 @@
 name: USS Qualifier Tests
 on:
-  pull_request: # All
+  pull_request:
   push:
     branches:
       - master
