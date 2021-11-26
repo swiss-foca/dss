@@ -1,0 +1,136 @@
+# Nominal behaviour tests
+
+@startuml
+title Scenario GEN0100
+legend: TODO
+@enduml
+
+@startuml
+title Scenario GEN0105
+legend: TODO
+@enduml
+
+@startuml
+title Scenario GEN0200
+legend: TODO
+@enduml
+
+@startuml
+title Scenario GEN0300
+legend: TODO
+@enduml
+
+@startuml
+title Scenario GEN0305
+legend: TODO
+@enduml
+
+@startuml
+title Scenario GEN0310
+legend: TODO
+@enduml
+
+@startuml
+title Scenario OPIN0020
+participant "Test Driver" as TD
+participant "USS under test" as USS
+
+== Test 1 ==
+TD --> USS: PUT /inject/operational_intent\nTotal number of vertices > 10,000
+TD <-- USS: 400 Bad Format
+
+== Test 2 ==
+TD --> USS: PUT /inject/operational_intent\nTotal number of vertices <= 10,000
+TD <-- USS: 200 OK
+@enduml
+
+@startuml
+title Scenario OPIN0030
+participant "Test Driver" as TD
+participant "USS under test" as USS
+
+== Test 1 ==
+TD --> USS: PUT /inject/operational_intent\nStart time >= now() + 30 days
+TD <-- USS: 400 Bad Format
+
+== Test 2 ==
+TD --> USS: PUT /inject/operational_intent\nStart time < now() + 30 days
+TD <-- USS: 200 OK
+@enduml
+
+@startuml
+title Scenario OPIN0035
+participant "Test Driver" as TD
+participant "USS1 under test" as USS1
+participant "USS2 mock / staging" as USS2
+
+TD --> USS2: PUT /inject/operational_intent/{entity2}
+TD <-- USS2: 200 OK\nOperational Intent 2 created. ovn2 is returned.
+
+TD --> USS1: PUT /inject/operational_intent/{entity2}/{ovn2}
+TD <-- USS1: 403 Forbidden
+@enduml
+
+@startuml
+title Scenario OPIN0040
+participant "Test Driver" as TD
+participant "USS1 under test" as USS1
+participant "USS2 mock / staging" as USS2
+
+== Test 1 (Activated -> Ended) ==
+
+TD --> USS1: PUT /inject/operational_intent/{entity1}
+TD <-- USS1: 200 OK - Operational Intent 1 created
+
+TD --> USS2: GET /observe/operational_intent in the area_of_interest of Operational Intent 1
+TD <-- USS2: 200 OK and returns the Operational Intent 1 with status Accepted and ovn1_b
+
+...
+
+TD --> USS1: PUT /inject/operational_intent/{entity1}/{ovn1_a}\n**Activate flight**
+TD <-- USS1: 200 OK - Operational Intent 1 updated
+
+TD --> USS2: GET /observe/operational_intent in the area_of_interest of Operational Intent 1
+TD <-- USS2: 200 OK and returns the Operational Intent 1 with status Activated and ovn1_b
+
+...
+
+TD --> USS1: PUT /inject/operational_intent/{entity1}/{ovn1_b}\n**Cancel flight**
+TD <-- USS1: 200 OK - Operational Intent 1 updated
+
+TD --> USS2: GET /observe/operational_intent in the area_of_interest of Operational Intent 1
+TD <-- USS2: 200 OK with empty results.
+
+
+== Test 2 (Accepted -> Ended) ==
+
+TD --> USS1: PUT /inject/operational_intent/{entity1}
+TD <-- USS1: 200 OK - Operational Intent 1 created with ovn1_a
+
+TD --> USS2: GET /observe/operational_intent in the area_of_interest of Operational Intent 1
+TD <-- USS2: 200 OK and returns the Operational Intent 1 with status Accepted
+
+...
+
+TD --> USS1: PUT /inject/operational_intent/{entity1}/{ovn1_a}\n**Cancel flight**
+TD <-- USS1: 200 OK - Operational Intent 1 updated with ovn1_b
+
+TD --> USS2: GET /observe/operational_intent in the area_of_interest of Operational Intent 1
+TD <-- USS2: 200 OK with empty results.
+@enduml
+
+@startuml
+title Scenario USS0005
+participant "Test Driver" as TD
+participant "USS1 under test" as USS1
+participant "DSS" as DSS
+
+TD --> USS1: PUT /inject/operational_intent/{entity1}
+TD <-- USS1: 200 OK - Operational Intent 1 created
+
+TD --> DSS: POST /dss/v1/operational_intent_references/query\narea_of_interest of Operational Intent 1
+TD <-- DSS: 200 OK - Result contains the Operational Intent 1
+@enduml
+
+
+'TODO: Add other tests
