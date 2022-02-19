@@ -25,6 +25,8 @@ for service_name in "${services[@]}"; do
     max_retry=7
     until [ "$(docker inspect -f \{\{.State.Health.Status\}\} "${container_name}")" == "healthy" ]; do
         if [ "$retry" -gt "$max_retry" ]; then
+            echo "$container_name log:"
+            docker logs "$container_name"
             echo "$container_name didn't properly start. Exit." && exit 1
         fi
         sleep 1

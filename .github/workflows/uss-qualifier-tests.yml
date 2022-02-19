@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - api_version_1_0_0*
 jobs:
   uss-qualifier-tests:
     name: USS Qualifier Tests
